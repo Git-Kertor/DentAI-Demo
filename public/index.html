@@ -78,8 +78,6 @@
 </body>
 </html>
 
-<script src="/socket.io/socket.io.js"></script>
-
 <script>
 
     //Tooth Database
@@ -247,8 +245,6 @@
     //InitiateCommand({num:'18', sur:'5', obs:'poisto'});
     //InitiateCommand({ num: '18', sur: '5', obs: 'poisto' });
     //Voice Recognition Script
-
-    var socket = io();
 
     function UpdateState(data) {
         document.getElementById("outputState").innerHTML = data;

@@ -4,8 +4,6 @@ const path = require('path');
 
 var app = express();
 var port = process.env.PORT || 1337;
-var server = app.listen(port);
-const io = require("socket.io")(server);
 
 app.use(express.static(path.join(__dirname, '/public')));
 
