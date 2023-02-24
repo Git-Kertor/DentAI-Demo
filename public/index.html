@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" type="text/css" href="css/index.css" />
+    <title></title>
+</head>
+<body>
+    <img src="images/mouth.png" class="teethBackground" />
+
+    <div>
+        <svg class="waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+             viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
+            <defs>
+                <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
+            </defs>
+            <g class="parallax">
+                <use xlink:href="#gentle-wave" x="48" y="0" fill="rgba(255,255,255,0.7" />
+                <use xlink:href="#gentle-wave" x="48" y="3" fill="rgba(255,255,255,0.5)" />
+                <use xlink:href="#gentle-wave" x="48" y="5" fill="rgba(255,255,255,0.3)" />
+                <use xlink:href="#gentle-wave" x="48" y="7" fill="#fff" />
+            </g>
+        </svg>
+    </div>
+
+    <button onclick="RecognizeVoice()" class="requestButton">
+        <img src="images/microphone.png" class="requestButtonImage" />
+    </button>
+    <p class="stateLog" id="outputState">11 1 paikkaus</p>
+
+    <div class="historyLog" id="historyLog">
+        <h3 style="margin-bottom:0.5em">Havainnot</h3>
+        <div class="logStatementContainer" id="logStatementContainer">
+            <div class="logStatement" id="outputStatementTemplate">
+                <p id="text">Test statement!</p>
+                <div class="xButton" id="xButton" onclick="logRemove(this)"></div>
+                <div class="statementBall" id="statementBall"></div>
+            </div>
+        </div>
+
+        <div class="controlContainer">
+            <input class="manualInput" type="text" id="manualInput" placeholder="Kirjaa manuaalisesti..." />
+            <button class="inButton" id="saveButton" onclick="save()">Tallenna</button>
+            <div class="inButton">
+                <label id="loadButton">
+                    <input id="loadButtonText" type="file" accept=".txt" onchange="load(this)" />
+                    Avaa...
+                </label>
+            </div>
+            <button class="inButton" style="display:none;" id="exportButton" onclick="exportPNG()">Tallenna .png</button>
+        </div>
+
+    </div>
+
+    <img class="logo" id="logo" src="images/logo.png" />
+
+
+    <audio id="audio">
+        <source src="audio/ping.mp3" type="audio/mp3">
+    </audio>
+
+
+    <div class="indicator" id="outputIndicator"></div>
+    <div id="teeth" class="teeth">
+        <div class="line" id="verticalLine"></div>
+        <p class="direction" id="oikea">oikea</p>
+        <p class="direction" id="vasen">vasen</p>
+        <div class="line" id="horizontalLine"></div>
+    </div>
+    <div class="toothInformationContainer">
+        <h1 id="toothNumber" style="margin:0;">Hammas nro.</h1>
+        <h3 id="surface1">Pinta 1:</h3>
+        <h3 id="surface2">Pinta 2:</h3>
+        <h3 id="surface3">Pinta 3:</h3>
+        <h3 id="surface4">Pinta 4:</h3>
+        <h3 id="surface5">Pinta 5:</h3>
+    </div>
+</body>
+</html>
+
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+
+    //Tooth Database
+    var teethData = new Object();
+
+    function CreateChart() {
+        var teeth = document.getElementById("teeth");
+        for (let i = 1; i <= 32; i++) {
+
+            //Divide teeth into sectors
+            let sector = Math.floor((i - 1) / 8) + 1;
+            let toothNum = 8;
+            if (sector % 2 == 0) {
+                toothNum = (i) % 8;
+                if (toothNum == 0) {
+                    toothNum = 8;
+                }
+            }
+            else {toothNum = 8 - (i-1) % 8;}
+
+            //toothParentContainer
+            let tooth = document.createElement('div');
+            tooth.id = `tooth${sector}${toothNum}`;
+            tooth.className = "tooth";
+            teeth.appendChild(tooth);
+            teethData[`${sector}${toothNum}`] = ["terve", "terve", "terve", "terve", "terve"];
+            tooth.onclick = function () { DisplayData(`${sector}${toothNum}`) };
+
+            //Position all teeth in an oval shape,
+            //Oval shape is derived from 2*sqrt(1-x^2)
+            var j = i;
+            if (i > 16) { j -= 16; }
+            var x = (j - 1) / 7.5;
+            //Manually adjust teeth positions for aesthetics.
+            var fineTuning = [0, 0.120, 0.21, 0.265, 0.285, 0.256, 0.17, 0.055]
+            if (j < 9 || (j > 16 && j < 25)) {
+                x -= fineTuning[(j % 9) - 1];
+            }
+            else {
+                x += fineTuning[(8 - j % 9) - 1];
+            }
+            var y = 2 * Math.sqrt(1 - (x - 1) * (x - 1));
+            y = 100 - y * 25 - 54;
+            var fin = 3.6;
+            if (i <= 16) {
+                tooth.style.left = `${x * 100 / 2}%`;
+                tooth.style.top = `${y - fin - 2}%`;
+            }
+            else {
+                tooth.style.left = `${100 - x * 100 / 2}%`;
+                tooth.style.top = `${100 - y - fin + 2}%`;
+            }
+
+            //toothTextureElement
+            var toothBackground = document.createElement('div');
+            toothBackground.className = "toothBackground";
+            toothBackground.style.transform = `rotate(${(i - 1 - ((i > 16)?1:0) ) / 30 * 360 - 90}deg)`;
+            tooth.appendChild(toothBackground);
+
+            var toothImage = document.createElement('img');
+            toothImage.className = 'toothImage';
+            toothImage.style.transform = `rotate(${(i - 1 - ((i > 16) ? 1 : 0)) / 30 * 360 - 90}deg)`;
+            let source = toothNum;
+            toothImage.src = `images/teeth/${toothNum}.png`;
+            if (toothNum == 1) {
+                if (sector < 3) {
+                    source = `${toothNum}_1`;
+                    toothImage.src = `images/teeth/${toothNum}_1.png`;
+                }
+                else {
+                    source = `${toothNum}_2`;
+                    toothImage.src = `images/teeth/${toothNum}_2.png`;
+                }
+            } 
+            tooth.appendChild(toothImage);
+
+            //var tops = [50,50,0,50,100];
+            //var lefts = [50,0,50,100,50];
+            for (let s = 0; s < 5; s++) {
+                //toothSurfaceElement
+                let toothSurface = document.createElement('div');
+                toothSurface.className = "toothSurface";
+                toothSurface.id = `toothSurface${sector}${toothNum}${s + 1}`;
+                //toothSurface.style.top = `${tops[s]}%`;
+                //toothSurface.style.left = `${lefts[s]}%`;
+                toothSurface.style.background = `url(../images/teeth/surfaces/${source}_${s + 1}.png)`;
+                toothBackground.appendChild(toothSurface);
+            }
+
+            //toothNumber
+            let toothText = document.createElement('h1');
+            toothText.className = "toothText";
+            toothText.innerHTML = `${sector}${toothNum}`;
+            toothText.style.transform = `rotate(${180 - (i - 1 - ((i > 16) ? 1 : 0)) / 30 * 360 - 90}deg)`;
+            toothBackground.appendChild(toothText);
+
+        }
+    }
+    CreateChart();
+
+    function DisplayData(toothNum) {
+        document.getElementById('toothNumber').innerHTML = `Hammas nro. ${toothNum}`;
+        let observations = teethData[`${toothNum}`];
+        for (let i = 0; i < 5; i++) {
+            document.getElementById(`surface${i+1}`).innerHTML = `Pinta ${i+1}: ${observations[i]}`;
+        }
+    }
+
+    //Manual Input//
+    var input = document.getElementById("manualInput");
+    input.addEventListener("keypress", function (event) {
+        if (event.key === "Enter" && input.value.length > 0) {
+            event.preventDefault();
+            if (input.value.length > 4) {
+                let num = input.value.substring(0, 2);
+                let sur = input.value.substring(3, 4);
+                let obs = ApproximateKeyword(input.value.substring(5));
+                if (!isNaN(num) && !isNaN(sur) && obs != "None") {
+                    InitiateCommand(num, sur, obs, true);
+                }   
+            }
+            input.value = "";
+        }
+    }); 
+
+    function SurfaceColorCodes(observation) {
+        switch (observation) {
+            case "terve":
+                return "green";
+            case "reikä":
+                return "olive";
+            case "paikkaus":
+                return "gray";
+            case "juurihoito":
+                return "yellow";
+            case "poisto":
+                return "black";
+            case "ikivihreä":
+                return "lime";
+            case "parodontiitti":
+                return "purple";
+            default:
+                return "green";
+        }
+    }
+
+    function InitiateCommand(num, sur, obs, logIt) {
+        let surface = document.getElementById(`toothSurface${num}${sur}`);
+        let observations = teethData[`${num}`];
+
+        if (surface == null) { console.log("invalid surface"); return; }
+
+        surface.style.background = SurfaceColorCodes(obs);
+        observations[`${sur - 1}`] = obs;
+        teethData[`${num}`] = observations;
+
+        if (logIt) {
+            Log(`${num} ${sur} ${obs}`);
+        }
+
+        DisplayData(num);
+        IndicatorColor("lime");
+    }
+
+    //InitiateCommand({num:'18', sur:'5', obs:'poisto'});
+    //InitiateCommand({ num: '18', sur: '5', obs: 'poisto' });
+    //Voice Recognition Script
+
+    var socket = io();
+
+    function UpdateState(data) {
+        document.getElementById("outputState").innerHTML = data;
+    }
+
+    const timing = {
+        duration: 600,
+        iterations: 1,
+        easing: "ease-out"
+    }
+
+    var logs = [];
+
+    function Log(data) {
+        let template = document.getElementById("outputStatementTemplate");
+        let statement = template.cloneNode(true);
+        statement.style.display = "block";
+        logs.push(data);
+        statement.id = `statement${logs.length - 1}`;
+
+        let statementText = statement.querySelector('#text');
+        statementText.id = `text${logs.length - 1}`;
+        let xButton = statement.querySelector('#xButton');
+        xButton.id = `xButton${logs.length - 1}`;
+        let statementBall = statement.querySelector('#statementBall');
+        statementBall.id = `statementBall${logs.length - 1}`;
+        statementBall.style.background = SurfaceColorCodes(data.substring(5));
+        statementText.innerHTML = `${data}`;
+
+        document.getElementById("logStatementContainer").prepend(statement);
+        let children = document.getElementById("logStatementContainer").children;
+        const moveDown = [
+            { transform: 'translateY(-118%)' },
+            { transform: 'translateY(0%)' }
+        ];
+        for (let i = 0; i < children.length; i++) {
+            children[i].animate(moveDown, timing);
+        }
+        document.getElementById('audio').play();
+    }
+
+    function DefineLogID(ID, newID) {
+        let statement = document.getElementById(`statement${ID}`);
+        statement.id = `statement${newID}`;
+
+        let statementText = document.getElementById(`text${ID}`);
+        statementText.id = `text${newID}`;
+
+        let xButton = document.getElementById(`xButton${ID}`);
+        xButton.id = `xButton${newID}`;
+
+        let statementBall = document.getElementById(`statementBall${ID}`);
+        statementBall.id = `statementBall${newID}`;
+    }
+    var waitForAnimation = false;
+    function logRemove(xButton) {
+        if (waitForAnimation) { return; }
+        let ID = xButton.id.replace('xButton', '');
+        let statement = document.getElementById(`statement${ID}`);
+        DefineLogID(ID, 'undefined');
+
+        const moveUp = [
+            { transform: 'translateY(0%)' },
+            { transform: 'translateY(-115%)' }
+        ];
+
+        let log = logs[ID];
+        for (let i = 0; i < logs.length; i++) {
+            if (i > ID) {
+                DefineLogID(i, i - 1);
+            }
+            else if (i != ID) {
+                document.getElementById(`statement${i}`).animate(moveUp, timing);
+            }
+        }
+        logs.splice(ID, 1);
+
+        for (let i = logs.length - 1; i >= -1; i--) {
+            let logSplits = log.split(' ');
+            if (i == -1) {
+                InitiateCommand(logSplits[0], logSplits[1], 'terve');
+                break;
+            }
+
+            let splits = logs[i].split(' ');
+            if (logs[i].includes(log.substring(0, 4))) {
+                InitiateCommand(splits[0], splits[1], splits[2], false);
+                break;
+            }
+        }
+
+        const fadeOut = [
+            { opacity: 1 },
+            { opacity: 0 }
+        ];
+
+        const fadeTiming = {
+            duration: 300,
+            iterations: 1,
+            easing: "ease-out"
+        };
+
+        xButton.onclick = "";
+        statement.style.opacity = 0;
+        statement.animate(fadeOut, fadeTiming);
+        waitForAnimation = true;
+        setTimeout(function () { statement.remove(); waitForAnimation = false; }, 600);
+    }
+
+    InitiateCommand('11', '1', 'poisto', true);
+    InitiateCommand('11', '1', 'paikkaus', true);
+    InitiateCommand('11', '1', 'paikkaus', true);
+    InitiateCommand('11', '1', 'paikkaus', true);
+    InitiateCommand('11', '1', 'paikkaus', true);
+    InitiateCommand('11', '1', 'paikkaus', true);
+    InitiateCommand('11', '5', 'poisto', true);
+
+    function save() {
+        var today = new Date();
+        var dd = String(today.getDate()).padStart(2, '0');
+        var mm = String(today.getMonth() + 1).padStart(2, '0');
+        var yyyy = today.getFullYear();
+        today = mm + '/' + dd + '/' + yyyy;
+        var fileName = `DentAI-Data ${today}.txt`;
+        var fileContent = "";
+        for (let i = logs.length - 1; i >= 0; i--) {
+            fileContent += logs[i] + "\n";
+        }
+        const a = document.createElement('a');
+        const file = new Blob([fileContent], { type: 'text/plain' });
+        a.href = URL.createObjectURL(file);
+        a.download = fileName;
+        a.click();
+        URL.revokeObjectURL(a.href);
+    }
+
+    function resetAll() {
+        for (let i = 1; i <= 4; i++) {
+            for (let j = 1; j <= 8; j++) {
+                for (let k = 1; k <= 5; k++) {
+                    InitiateCommand(`${i}${j}`,`${k}`,'terve');
+                }
+            }
+        }
+        for (let i = 0; i < logs.length; i++) {
+            let statement = document.getElementById(`statement${i}`);
+            statement.remove();
+        }
+        logs.length = 0;
+    }
+
+    function load(input) {
+        let file = input.files[0];
+        input.value = null;
+        let reader = new FileReader();
+        let content = "";
+        reader.onload = function (event) {
+            content = event.target.result;
+            if (content.length < 2) { return; }
+            resetAll();
+            let splits = content.split('\n');
+            for (let i = splits.length - 2; i >= 0; i--) {
+                console.log(splits);
+                console.log(splits[i].substring(0, 2), splits[i].substring(3, 4), splits[i].substring(5));
+                InitiateCommand(splits[i].substring(0, 2), splits[i].substring(3, 4), splits[i].substring(5), true);
+            }
+        }
+        reader.readAsText(file);
+    }
+
+    function exportPNG() {
+
+    }
+
+    function IndicatorColor(color) {
+        document.getElementById("outputIndicator").style.background = color;
+    }
+
+    const levenshteinDistance = (s, t) => {
+        if (!s.length) return t.length;
+        if (!t.length) return s.length;
+        const arr = [];
+        for (let i = 0; i <= t.length; i++) {
+            arr[i] = [i];
+            for (let j = 1; j <= s.length; j++) {
+                arr[i][j] =
+                    i === 0
+                        ? j
+                        : Math.min(
+                            arr[i - 1][j] + 1,
+                            arr[i][j - 1] + 1,
+                            arr[i - 1][j - 1] + (s[j - 1] === t[i - 1] ? 0 : 1)
+                        );
+            }
+        }
+        return arr[t.length][s.length];
+    };
+
+    //define observations
+    var keywords = ["terve", "reikä", "paikkaus", "juurihoito", "poisto", "ikivihreä", "parodontiitti"];
+    let previousCommand = "";
+
+    function ApproximateKeyword(obs) {
+        let lobs = obs.toLowerCase();
+        for (let i = 0; i < keywords.length; i++) {
+            if (levenshteinDistance(lobs, keywords[i]) < 3 || lobs.includes(keywords[i])) {
+                return keywords[i];
+            }
+        }
+        return "None";
+    }
+
+    // new instance of speech recognition
+    var recognition = new webkitSpeechRecognition();
+    var recognizerRun = false;
+
+    function RecognizeVoice() {
+        if (recognizerRun) {
+            recognizerRun = false;
+            recognition.stop();
+            return;
+        }
+        recognition.lang = 'fi-FI';
+        recognition.continuous = true;
+        recognition.maxAlternatives = 3;
+        recognition.interimResults = true;
+        recognizerRun = true;
+        recognition.start();
+
+        //Results we have to check for
+        // 47 1 poisto
+        // 471 poisto
+        // 4 71 poisto
+        // 47 1poisto
+        // 4711 osto
+        // 47.01 poisto
+        // 471 poistotuote
+        recognition.onresult = function (event) {
+            IndicatorColor("red");
+            
+            var resultsLength = event.results.length - 1;
+            var ArrayLength = event.results[resultsLength].length - 1;
+            var transcription = "";
+
+            UpdateState(event.results[resultsLength][0].transcript);
+            if (!event.results[resultsLength].isFinal) { return; }
+            console.log(event.results);
+
+            for (let i = 0; i <= ArrayLength; i++) {
+                transcription += event.results[resultsLength][i].transcript + ' ';
+            }
+
+            let segments = transcription.split(' ');
+
+            if (segments.length >= 2) {
+                //Retrieving observation
+                var observation = "";
+                var numbers = "";
+                for (let i = 1; i < segments.length; i++) {
+                    observation = ApproximateKeyword(segments[i]);
+                    if (observation != "None") {
+                        if (isNaN(segments[i - 1])) { return; }
+                        numbers = segments[i - 1].replace('.', '').replace('0', '');
+                        //Filter out: 40 15 poisto
+                        if (numbers.length < 2 && i - 2 >= 0) {
+                            numbers = segments[i - 2] + segments[i - 1];
+                        }
+                        else if (numbers.length == 2) {
+                            continue;
+                        }
+                        break;
+                    }
+                }
+                if (observation == "None") { return; }
+
+                //Validate numbers
+                var command = `${numbers}${observation}`;
+                // Result is in format 4711poisto
+                if (!isNaN(command.substring(0, 4))) {
+                    numbers = command.substring(0, 3);
+                    command = `${numbers}${observation}`;
+                }
+                if (isNaN(numbers) && numbers.length < 3) { return; }
+
+                IndicatorColor("green");
+                UpdateState(`${numbers.substring(0, 2)} ${numbers.substring(2)} ${observation}`);
+                if (command != previousCommand) {
+                    InitiateCommand(numbers.substring(0, 2), `${numbers.substring(2)}`, `${observation}`, true);
+                    previousCommand = command;
+                }
+            }
+        }
+        recognition.onend = function (event) {
+            console.log('Speech recognition service disconnected');
+            if (recognizerRun) {
+                recognition.start();
+            }
+        }
+        // speech error handling
+        recognition.onerror = function (event) {
+            console.log('error?');
+            console.log(event);
+        }
+    }
+</script>
+

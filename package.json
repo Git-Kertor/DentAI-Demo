@@ -1,0 +1,19 @@
+{
+  "name": "dent-ai_web_application",
+  "version": "0.0.0",
+  "description": "DentAI_Web_Application",
+  "main": "server.js",
+  "author": {
+    "name": ""
+  },
+  "devDependencies": {
+    "eslint": "^8.21.0"
+  },
+  "eslintConfig": {},
+  "dependencies": {
+    "express": "^4.18.2",
+    "python-shell": "^3.0.1",
+    "socket.io": "^4.5.4",
+    "socket.io-client": "^4.5.4"
+  }
+}
