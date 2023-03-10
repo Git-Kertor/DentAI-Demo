@@ -6,43 +6,112 @@
     <title></title>
 </head>
 <body>
-    <img src="images/mouth.png" class="teethBackground" />
+    <div class="parentContainer">
 
-    <div>
-        <svg class="waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-             viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
-            <defs>
-                <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
-            </defs>
-            <g class="parallax">
-                <use xlink:href="#gentle-wave" x="48" y="0" fill="rgba(255,255,255,0.7" />
-                <use xlink:href="#gentle-wave" x="48" y="3" fill="rgba(255,255,255,0.5)" />
-                <use xlink:href="#gentle-wave" x="48" y="5" fill="rgba(255,255,255,0.3)" />
-                <use xlink:href="#gentle-wave" x="48" y="7" fill="#fff" />
-            </g>
-        </svg>
-    </div>
-
-    <button onclick="RecognizeVoice()" class="requestButton">
-        <img src="images/microphone.png" class="requestButtonImage" />
-    </button>
-    <p class="stateLog" id="outputState">11 1 paikkaus</p>
-
+    <p id="keywordList" style="display:none">
+        koko hampaan puutos (KHP);
+        puhkeamaton (Vaihe);
+        osittain puhjennut (Vaihe);
+        juuren korvaava implantti (IMP);
+        hampaan juuri (JUU);
+        hampaan purenta (PUR);
+        hampaan siirtymät ja liikkuvuudet (SIL);
+        hampaan kehityshäiriöt (KH);
+        hammas ylipuhjennut (HYP);
+        juurikanavanasta (JNK);
+        parapulpaalinasta (PPN);
+        juurikanavassa lääkeainetta (JL);
+        vierasesine (VIE);
+        juurentäyte apeksi 2mm (JT 1);
+        juurentäyte yli apeksi (JTY);
+        juurentäyte guttaperkka (GP);
+        juurentäyte muu materiaali (MUU);
+        hammaskohtainen proteettinen rakenne (PR);
+        hammaskruunu (HAK);
+        yksittäinen implanttikruunu (IKR);
+        implantin peittoruuvi (IPR);
+        hammas poistettava (Poista);
+        furkaatioleesioaste 1 (Fur 1);
+        furkaatioleesioaste 2 (Fur 2);
+        furkaatioleesioaste 3 (Fur 3);
+        furkaatioleesioaste 4 (Fur 4);
+        |
+        aktiivinen dentiinikaries (DEN);
+        aktiivinen kiillekaries (KII);
+        täyte, yhdistelmämuovi (MUO);
+        täyte, lasi-ionomeeri (LAS);
+        pinnoite, yhdistelmämuovi (PIN);
+        täyte, amalgaami (AMA);
+        aktiivinen pulpakaries (PUL);
+        inaktiivinen kiillekaries (KII);
+        täyte, väliaikainen (VÄL);
+        hampaan lohkeama (LOH);
+        attritio (ATR);
+        abraasio (ABR);
+        eroosio (ERO);
+        fluoroosi (FLU);
+        hypoplasia (HYP);
+        hypomineralisaatio (HYM);
+        värjäymä, sisäinen (VÄS);
+        fraktuura (FRA);
+        mikrofraktuura (MFR);
+        kulumafasetti (KUF);
+        saumadiskrepanssi (SDI);
+        hammas pinnoitettava (Pinn.);
+        täyte, keramia (KER);
+        ienverenvuoto (IVV);
+        biofilmi (BIO);
+        supragingivaalinen hammaskivi (SPH);
+        subgingivaalinen hammaskivi (SBH);
+        alkava parodontiitti (APA);
+        krooninen kohtalainen parodontiitti (KKP);
+        pulpaperäinen parodontiitti (PPP);
+        ientaskuperäinen parodontiitti (IPP)
+    </p>
+    <!--First Panel Start-->
     <div class="historyLog" id="historyLog">
-        <h3 style="margin-bottom:0.5em">Havainnot</h3>
-        <div class="logStatementContainer" id="logStatementContainer">
-            <div class="logStatement" id="outputStatementTemplate">
-                <p id="text">Test statement!</p>
-                <div class="xButton" id="xButton" onclick="logRemove(this)"></div>
-                <div class="statementBall" id="statementBall"></div>
+
+        <div class="logStatementContainerParent">
+            <h2 style="margin-left:3px">Havainnot</h2>
+            <div class="logStatementContainer" id="logStatementContainer">
+                <div class="logStatement" id="outputStatementTemplate">
+                    <div class="logText1">
+                        <h2>Tunnus</h2>
+                        <p id="text1">Test statement!</p>
+                    </div>
+                    <div class="logText2">
+                        <h2>Havainto</h2>
+                        <p id="text2">Test statement!</p>
+                    </div>
+
+                    <div class="xButton" id="xButton" onclick="logRemove(this)"></div>
+                    <div class="statementBall" id="statementBall"></div>
+                </div>
             </div>
+
         </div>
 
         <div class="controlContainer">
+
+            <div class="toggleButton">
+                <label class="switch">
+                    <input id="speechToggle" type="checkbox">
+                    <span class="slider round"></span>
+                </label>
+                <p>Toista komento uudestaan (TTS)</p>
+            </div>
+
+            <div class="voiceContainer" id="voiceContainer">
+                <button onclick="RecognizeVoice()" class="requestButton" id="requestButton">
+                    <img src="images/microphone.png" class="requestButtonImage" id="requestButtonImage" />
+                </button>
+                <p class="stateLog" id="outputState">11 1 paikkaus</p>
+            </div>
+
             <input class="manualInput" type="text" id="manualInput" placeholder="Kirjaa manuaalisesti..." />
             <button class="inButton" id="saveButton" onclick="save()">Tallenna</button>
             <div class="inButton">
-                <label id="loadButton">
+                <label style="width:100%" id="loadButton">
                     <input id="loadButtonText" type="file" accept=".txt" onchange="load(this)" />
                     Avaa...
                 </label>
@@ -52,28 +121,72 @@
 
     </div>
 
-    <img class="logo" id="logo" src="images/logo.png" />
-
-
-    <audio id="audio">
-        <source src="audio/ping.mp3" type="audio/mp3">
-    </audio>
-
-
-    <div class="indicator" id="outputIndicator"></div>
-    <div id="teeth" class="teeth">
-        <div class="line" id="verticalLine"></div>
-        <p class="direction" id="oikea">oikea</p>
-        <p class="direction" id="vasen">vasen</p>
-        <div class="line" id="horizontalLine"></div>
-    </div>
+    <!--Second Panel Start-->
     <div class="toothInformationContainer">
-        <h1 id="toothNumber" style="margin:0;">Hammas nro.</h1>
-        <h3 id="surface1">Pinta 1:</h3>
-        <h3 id="surface2">Pinta 2:</h3>
-        <h3 id="surface3">Pinta 3:</h3>
-        <h3 id="surface4">Pinta 4:</h3>
-        <h3 id="surface5">Pinta 5:</h3>
+
+        <div class="surfaceInformationContainer">
+
+            <h2 id="toothNumber" style="margin:0;">Hammas nro.</h2>
+
+            <div id="firstPair" class="surfacePair">
+                <h2 style="margin:0;">Kokonaisuus</h2>
+                <h3 id="surface0">Hammas:</h3>
+            </div>
+
+            <h2 style="margin:0;">Pintakohtaiset havainnot</h2>
+
+            <div class="surfacePair">
+                <h2 class="surfaceID">1</h2>
+                <h3 id="surface1">Pinta 1:</h3>
+            </div>
+
+            <div class="surfacePair">
+                <h2 class="surfaceID">2</h2>
+                <h3 id="surface2">Pinta 1:</h3>
+            </div>
+
+            <div class="surfacePair">
+                <h2 class="surfaceID">3</h2>
+                <h3 id="surface3">Pinta 1:</h3>
+            </div>
+
+            <div class="surfacePair">
+                <h2 class="surfaceID">4</h2>
+                <h3 id="surface4">Pinta 1:</h3>
+            </div>
+
+            <div class="surfacePair">
+                <h2 class="surfaceID">5</h2>
+                <h3 id="surface5">Pinta 1:</h3>
+            </div>
+        </div>
+
+        <div class="informationContainer">
+            <h3>Hammaskohtaiset havainnot</h3>
+            <div class="informationContainerOverflow">
+                <p id="toothSpecificObservationsList"></p>
+            </div>
+        </div>
+        
+        <div class="informationContainer">
+            <h3>Pintakohtaiset havainnot</h3>
+            <div class="informationContainerOverflow"> 
+                <p id="surfaceSpecificObservationsList"></p>
+            </div>
+        </div>
+
+    </div>
+    <!--Third Panel Start-->
+    <div class="teethContainer">
+        <div id="teeth" class="teeth">
+            <div class="line" id="verticalLine"></div>
+            <p class="direction" id="oikea">oikea</p>
+            <p class="direction" id="vasen">vasen</p>
+            <div class="line" id="horizontalLine"></div>
+        </div>
+        <img src="images/mouth.png" class="teethBackground" />
+        <img class="logo" id="logo" src="images/logo.png" />
+    </div>
     </div>
 </body>
 </html>
@@ -103,7 +216,7 @@
             tooth.id = `tooth${sector}${toothNum}`;
             tooth.className = "tooth";
             teeth.appendChild(tooth);
-            teethData[`${sector}${toothNum}`] = ["terve", "terve", "terve", "terve", "terve"];
+            teethData[`${sector}${toothNum}`] = ["Ei havaintoja", "Ei havaintoja", "Ei havaintoja", "Ei havaintoja", "Ei havaintoja", "Ei havaintoja"];
             tooth.onclick = function () { DisplayData(`${sector}${toothNum}`) };
 
             //Position all teeth in an oval shape,
@@ -178,13 +291,35 @@
     }
     CreateChart();
 
-    function DisplayData(toothNum) {
-        document.getElementById('toothNumber').innerHTML = `Hammas nro. ${toothNum}`;
-        let observations = teethData[`${toothNum}`];
-        for (let i = 0; i < 5; i++) {
-            document.getElementById(`surface${i+1}`).innerHTML = `Pinta ${i+1}: ${observations[i]}`;
+    var toothKeywords = [];
+    var surfaceKeywords = [];
+    var keywords = [];
+
+    //Keywords
+    function fillKeywordList() {
+        let list = document.getElementById('keywordList').innerHTML.split(';');
+        let toothSpecific = true;
+        let x = "";
+        let y = "";
+        for (let i = 0; i < list.length; i++) {
+            if (list[i].includes('|')) {
+                toothSpecific = false;
+                continue;
+            }
+            if (toothSpecific) {
+                x += list[i] + '<br>';
+                toothKeywords.push(list[i]);
+            }
+            else {
+                y += list[i] + '<br>';
+                surfaceKeywords.push(list[i]);
+            }
+            keywords.push(list[i]);
         }
+        document.getElementById("toothSpecificObservationsList").innerHTML = x;
+        document.getElementById("surfaceSpecificObservationsList").innerHTML = y;
     }
+    fillKeywordList();
 
     //Manual Input//
     var input = document.getElementById("manualInput");
@@ -192,12 +327,7 @@
         if (event.key === "Enter" && input.value.length > 0) {
             event.preventDefault();
             if (input.value.length > 4) {
-                let num = input.value.substring(0, 2);
-                let sur = input.value.substring(3, 4);
-                let obs = ApproximateKeyword(input.value.substring(5));
-                if (!isNaN(num) && !isNaN(sur) && obs != "None") {
-                    InitiateCommand(num, sur, obs, true);
-                }   
+                Recognize(input.value.split(' '));
             }
             input.value = "";
         }
@@ -224,27 +354,60 @@
         }
     }
 
-    function InitiateCommand(num, sur, obs, logIt) {
+    function toothNotFound(num) {
+        let tooth = document.getElementById(`tooth${num}`);
+        return tooth == null;
+    }
+
+    function InitiateCommand(num, sur, obs, add_log) {
         let surface = document.getElementById(`toothSurface${num}${sur}`);
-        let observations = teethData[`${num}`];
+        let observations = teethData[num];
 
-        if (surface == null) { console.log("invalid surface"); return; }
-
-        surface.style.background = SurfaceColorCodes(obs);
-        observations[`${sur - 1}`] = obs;
-        teethData[`${num}`] = observations;
-
-        if (logIt) {
-            Log(`${num} ${sur} ${obs}`);
+        if (toothNotFound(num)) {
+            console.log("Tooth doesn't exist");
+            return;
+        }
+        if (surface != null && sur != 0) {
+            surface.style.background = SurfaceColorCodes(obs);
+            observations[sur] = obs;
+            teethData[num] = observations;
+        }
+        else {
+            sur = 0;
+            observations[sur] = obs;
+            teethData[num] = observations;
+        }
+        if (add_log) {
+            Log(num, sur, obs);
         }
 
         DisplayData(num);
         IndicatorColor("lime");
     }
 
-    //InitiateCommand({num:'18', sur:'5', obs:'poisto'});
-    //InitiateCommand({ num: '18', sur: '5', obs: 'poisto' });
-    //Voice Recognition Script
+    selectedTooth = "";
+    function DisplayData(toothNum) {
+        if (selectedTooth.length > 0) {
+            unselectTooth(selectedTooth);
+        }
+        selectedTooth = toothNum;
+        selectTooth(selectedTooth);
+        document.getElementById('toothNumber').innerHTML = `Hammas nro. ${toothNum}`;
+        let observations = teethData[`${toothNum}`];
+        for (let i = 0; i < 6; i++) {
+            document.getElementById(`surface${i}`).innerHTML = `${observations[i]}`;
+        }
+    }
+
+    function unselectTooth(num) {
+        document.getElementById(`tooth${num}`).style.border = "0px";
+    }
+
+    function selectTooth(num) {
+        document.getElementById(`tooth${num}`).style.border = "2px solid white";
+    }
+
+
 
     function UpdateState(data) {
         document.getElementById("outputState").innerHTML = data;
@@ -257,22 +420,33 @@
     }
 
     var logs = [];
-
-    function Log(data) {
+    //Add a log statement
+    function Log(num, sur, obs) {
         let template = document.getElementById("outputStatementTemplate");
         let statement = template.cloneNode(true);
-        statement.style.display = "block";
-        logs.push(data);
+        statement.style.display = "flex";
+        logs.push(`${num} ${sur} ${obs}`);
         statement.id = `statement${logs.length - 1}`;
 
-        let statementText = statement.querySelector('#text');
-        statementText.id = `text${logs.length - 1}`;
+        let statementText1 = statement.querySelector('#text1');
+        statementText1.id = `text1${logs.length - 1}`;
+        let statementText2 = statement.querySelector('#text2');
+        statementText2.id = `text2${logs.length - 1}`;
         let xButton = statement.querySelector('#xButton');
         xButton.id = `xButton${logs.length - 1}`;
         let statementBall = statement.querySelector('#statementBall');
         statementBall.id = `statementBall${logs.length - 1}`;
-        statementBall.style.background = SurfaceColorCodes(data.substring(5));
-        statementText.innerHTML = `${data}`;
+        statementBall.style.background = SurfaceColorCodes(obs);
+
+        //Surface is 0 when observation is about the tooth as a whole
+        if (sur == 0) {
+            statementText1.innerHTML = `${num}`;
+        }
+        else {
+            statementText1.innerHTML = `${num} ${sur}`;
+        }
+        statementText2.innerHTML = obs;
+        
 
         document.getElementById("logStatementContainer").prepend(statement);
         let children = document.getElementById("logStatementContainer").children;
@@ -283,15 +457,28 @@
         for (let i = 0; i < children.length; i++) {
             children[i].animate(moveDown, timing);
         }
-        document.getElementById('audio').play();
     }
 
+    //Speech Synthesis Function
+    const synth = window.speechSynthesis;
+    function Speech(sentence) {
+        if (!document.getElementById('speechToggle').checked) { return; }
+        let utterance = new SpeechSynthesisUtterance(sentence);
+        utterance.lang = 'fi-FI';
+        utterance.rate = 0.8;
+        speechSynthesis.speak(utterance);
+    }
+
+    //All log statements must have unique id's so when deleting some, we have to account for it.
     function DefineLogID(ID, newID) {
         let statement = document.getElementById(`statement${ID}`);
         statement.id = `statement${newID}`;
 
-        let statementText = document.getElementById(`text${ID}`);
-        statementText.id = `text${newID}`;
+        let statementText1 = document.getElementById(`text1${ID}`);
+        statementText1.id = `text1${newID}`;
+
+        let statementText2 = document.getElementById(`text2${ID}`);
+        statementText2.id = `text2${newID}`;
 
         let xButton = document.getElementById(`xButton${ID}`);
         xButton.id = `xButton${newID}`;
@@ -299,19 +486,21 @@
         let statementBall = document.getElementById(`statementBall${ID}`);
         statementBall.id = `statementBall${newID}`;
     }
+
+    //Remove a log statement and initiate an animation on the ones below it to move up.
     var waitForAnimation = false;
     function logRemove(xButton) {
         if (waitForAnimation) { return; }
         let ID = xButton.id.replace('xButton', '');
         let statement = document.getElementById(`statement${ID}`);
         DefineLogID(ID, 'undefined');
-
         const moveUp = [
             { transform: 'translateY(0%)' },
             { transform: 'translateY(-115%)' }
         ];
-
         let log = logs[ID];
+        //All of the ones on top have an ID that is 1 smaller now, since one was deleted
+        //Also animate the ones below it
         for (let i = 0; i < logs.length; i++) {
             if (i > ID) {
                 DefineLogID(i, i - 1);
@@ -320,33 +509,31 @@
                 document.getElementById(`statement${i}`).animate(moveUp, timing);
             }
         }
+        //Remove log statement with ID from logs array
         logs.splice(ID, 1);
-
+        //The most recent tooth specific command is now in effect.
         for (let i = logs.length - 1; i >= -1; i--) {
             let logSplits = log.split(' ');
             if (i == -1) {
-                InitiateCommand(logSplits[0], logSplits[1], 'terve');
+                InitiateCommand(logSplits[0], logSplits[1], 'Ei havaintoja');
                 break;
             }
-
             let splits = logs[i].split(' ');
             if (logs[i].includes(log.substring(0, 4))) {
                 InitiateCommand(splits[0], splits[1], splits[2], false);
                 break;
             }
         }
-
+        //Fade Out animation
         const fadeOut = [
             { opacity: 1 },
             { opacity: 0 }
         ];
-
         const fadeTiming = {
             duration: 300,
             iterations: 1,
             easing: "ease-out"
         };
-
         xButton.onclick = "";
         statement.style.opacity = 0;
         statement.animate(fadeOut, fadeTiming);
@@ -384,8 +571,8 @@
     function resetAll() {
         for (let i = 1; i <= 4; i++) {
             for (let j = 1; j <= 8; j++) {
-                for (let k = 1; k <= 5; k++) {
-                    InitiateCommand(`${i}${j}`,`${k}`,'terve');
+                for (let k = 0; k <= 5; k++) {
+                    InitiateCommand(`${i}${j}`, `${k}`,'Ei havaintoja');
                 }
             }
         }
@@ -420,7 +607,7 @@
     }
 
     function IndicatorColor(color) {
-        document.getElementById("outputIndicator").style.background = color;
+        document.getElementById("voiceContainer").style.borderColor = color;
     }
 
     const levenshteinDistance = (s, t) => {
@@ -443,30 +630,65 @@
         return arr[t.length][s.length];
     };
 
-    //define observations
-    var keywords = ["terve", "reikä", "paikkaus", "juurihoito", "poisto", "ikivihreä", "parodontiitti"];
-    let previousCommand = "";
+    function specialExceptions(word) {
+        switch (word) {
+            case "parapulpaalinasta":
+                return "parabullpauliinasta";
+            default:
+                return word;
+        }
+    }
 
     function ApproximateKeyword(obs) {
+        let possibilities = [];
         let lobs = obs.toLowerCase();
+        //Retrieve all possible matches
         for (let i = 0; i < keywords.length; i++) {
-            if (levenshteinDistance(lobs, keywords[i]) < 3 || lobs.includes(keywords[i])) {
-                return keywords[i];
+            let keywordContent = keywords[i].substring(0, keywords[i].indexOf('(')).replace(/\s/g, '');
+            keywordContent = specialExceptions(keywordContent);
+            if (levenshteinDistance(lobs, keywordContent) < 5 || lobs.includes(keywordContent)) {
+                possibilities.push(keywords[i]);
             }
         }
+        let lowest = 99;
+        let mostLikelyMatch = "";
+        //Compare possible matches
+        for (let i = 0; i < possibilities.length; i++) {
+            let keywordContent = possibilities[i].substring(0, possibilities[i].indexOf('(')).replace(/\s/g, '');
+            let lev = levenshteinDistance(lobs, keywordContent);
+            if (lev < lowest) {
+                mostLikelyMatch = possibilities[i];
+                lowest = lev;
+            }
+        }
+        if (mostLikelyMatch.length > 1) {
+            return mostLikelyMatch;
+        }
         return "None";
+    }
+
+    function micColor(color, filter) {
+        document.getElementById('requestButton').style.borderColor = color;
+        document.getElementById('requestButtonImage').style.filter = filter;
     }
 
     // new instance of speech recognition
     var recognition = new webkitSpeechRecognition();
     var recognizerRun = false;
 
+    let previousCommand = "";
+    //Recognition Service
     function RecognizeVoice() {
+        //Turning recognizer off and on
         if (recognizerRun) {
+            micColor("white", '');
             recognizerRun = false;
             recognition.stop();
             return;
         }
+        micColor("red", 'brightness(0.5) sepia(1) hue-rotate(345deg) saturate(100)');
+
+        //Initialization
         recognition.lang = 'fi-FI';
         recognition.continuous = true;
         recognition.maxAlternatives = 3;
@@ -488,66 +710,114 @@
             var resultsLength = event.results.length - 1;
             var ArrayLength = event.results[resultsLength].length - 1;
             var transcription = "";
+            let lastWords = event.results[resultsLength][0].transcript;
+            let tempSegments = event.results[resultsLength][0].transcript.split(' ');
 
-            UpdateState(event.results[resultsLength][0].transcript);
+            //Limit recognition preview to 4 words.
+            if(tempSegments.length > 4) {
+                let len = tempSegments.length;
+                lastWords = `${tempSegments[len - 4]} ${tempSegments[len - 3]} ${tempSegments[len - 2]} ${tempSegments[len - 1]}`;
+            }
+            UpdateState(lastWords);
+
+            //We only want to compare the final result
             if (!event.results[resultsLength].isFinal) { return; }
             console.log(event.results);
 
+            //Retrieve all transcriptions
             for (let i = 0; i <= ArrayLength; i++) {
                 transcription += event.results[resultsLength][i].transcript + ' ';
             }
-
             let segments = transcription.split(' ');
-
-            if (segments.length >= 2) {
-                //Retrieving observation
-                var observation = "";
-                var numbers = "";
-                for (let i = 1; i < segments.length; i++) {
-                    observation = ApproximateKeyword(segments[i]);
-                    if (observation != "None") {
-                        if (isNaN(segments[i - 1])) { return; }
-                        numbers = segments[i - 1].replace('.', '').replace('0', '');
-                        //Filter out: 40 15 poisto
-                        if (numbers.length < 2 && i - 2 >= 0) {
-                            numbers = segments[i - 2] + segments[i - 1];
-                        }
-                        else if (numbers.length == 2) {
-                            continue;
-                        }
-                        break;
-                    }
-                }
-                if (observation == "None") { return; }
-
-                //Validate numbers
-                var command = `${numbers}${observation}`;
-                // Result is in format 4711poisto
-                if (!isNaN(command.substring(0, 4))) {
-                    numbers = command.substring(0, 3);
-                    command = `${numbers}${observation}`;
-                }
-                if (isNaN(numbers) && numbers.length < 3) { return; }
-
-                IndicatorColor("green");
-                UpdateState(`${numbers.substring(0, 2)} ${numbers.substring(2)} ${observation}`);
-                if (command != previousCommand) {
-                    InitiateCommand(numbers.substring(0, 2), `${numbers.substring(2)}`, `${observation}`, true);
-                    previousCommand = command;
-                }
-            }
+            Recognize(segments);
         }
+
+        //Recognition needs to be continuous
         recognition.onend = function (event) {
             console.log('Speech recognition service disconnected');
             if (recognizerRun) {
                 recognition.start();
             }
         }
+
         // speech error handling
         recognition.onerror = function (event) {
             console.log('error?');
             console.log(event);
+            if (recognizerRun) {
+                recognition.start();
+            }
         }
     }
+
+    function Recognize(segments) {
+        //Retrieving observation
+        if (segments.length >= 2) {
+            var observation = "None";
+            var numbers = "";
+            var surface = "";
+            for (let i = 0; i < segments.length; i++) {
+                if (!isNaN(segments[i])) { continue; }
+
+                if (observation == "None" && i + 3 < segments.length) { observation = ApproximateKeyword(segments[i] + segments[i + 1] + segments[i + 2] + segments[i + 3]); }
+                if (observation == "None" && i + 2 < segments.length) { observation = ApproximateKeyword(segments[i] + segments[i + 1] + segments[i + 2]); }
+                if (observation == "None" && i + 1 < segments.length) { observation = ApproximateKeyword(segments[i] + segments[i + 1]); }
+                if (observation == "None") { observation = ApproximateKeyword(segments[i]); }
+
+                if (observation != "None") {
+                    if (i == 0) { break; }
+                    numbers = segments[i - 1].replace('.', '').replace('0', '');
+                    if (isNaN(segments[i - 1])) { return; }
+                    //Filter out: 40 15 poisto
+                    if (i - 2 >= 0) {
+                        if (numbers.length < 2 || segments[i - 2].includes('0')) {
+                            numbers = (segments[i - 2] + segments[i - 1]).replace('0', '');
+                        }
+                    }
+                    break;
+                }
+            }
+            if (observation == "None") { return; }
+            // Result is in format 4711poisto
+            if (numbers.length == 4) {
+                numbers = numbers.substring(0, 3);
+            }
+            // Result is in format 471poisto
+            if (numbers.length == 3) {
+                surface = numbers.substring(2);
+                numbers = numbers.substring(0, 2);
+            }
+
+            IndicatorColor("blue");
+            UpdateState(observation);
+            //Result does not have a valid number
+            if (isNaN(numbers) || numbers.length != 2) { return; }
+            //Surface specific observation made on a tooth
+            if (surface.length < 1 && surfaceKeywords.includes(observation)) { IndicatorColor("yellow"); return; }
+            //Tooth specific observation made on a surface
+            if (surface.length == 1 && toothKeywords.includes(observation)) { IndicatorColor("yellow"); return; }
+
+            //Result has passed all restrictions
+            IndicatorColor("green");
+
+            let toothNum = numbers;
+            let command = `${toothNum} ${surface} ${observation}`;
+            UpdateState(command);
+
+            if (command != previousCommand) {
+                if (toothNotFound(toothNum)) {
+                    Speech("Hammasta ei löytynyt");
+                    IndicatorColor("yellow");
+                    return;
+                }
+                InitiateCommand(toothNum, surface, observation, true);
+                previousCommand = command;
+                Speech(command);
+            }
+        }
+    }
+
+
+
 </script>
 
