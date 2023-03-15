@@ -35,7 +35,7 @@
         furkaatioleesioaste 2 (Fur 2);
         furkaatioleesioaste 3 (Fur 3);
         furkaatioleesioaste 4 (Fur 4);
-        |
+        |;
         aktiivinen dentiinikaries (DEN);
         aktiivinen kiillekaries (KII);
         täyte, yhdistelmämuovi (MUO);
@@ -184,7 +184,9 @@
             <p class="direction" id="vasen">vasen</p>
             <div class="line" id="horizontalLine"></div>
         </div>
-        <img src="images/mouth.png" class="teethBackground" />
+
+        <img src="images/mouth.png" class="teethBackground" id="teethBackground"/>
+        
         <img class="logo" id="logo" src="images/logo.png" />
     </div>
     </div>
@@ -272,11 +274,11 @@
             for (let s = 0; s < 5; s++) {
                 //toothSurfaceElement
                 let toothSurface = document.createElement('div');
-                toothSurface.className = "toothSurface";
+                toothSurface.className = `toothSurface toothSurface${s + 1}`;
                 toothSurface.id = `toothSurface${sector}${toothNum}${s + 1}`;
                 //toothSurface.style.top = `${tops[s]}%`;
                 //toothSurface.style.left = `${lefts[s]}%`;
-                toothSurface.style.background = `url(../images/teeth/surfaces/${source}_${s + 1}.png)`;
+                //toothSurface.style.background = `url(../images/teeth/surfaces/${source}_${s + 1}.png)`;
                 toothBackground.appendChild(toothSurface);
             }
 
@@ -290,6 +292,25 @@
         }
     }
     CreateChart();
+
+    //Tooth Resize
+    window.addEventListener('load', function (event) {
+        var widthOfImage = document.getElementById('teethBackground').clientWidth;
+        var heightOfImage = document.getElementById('teethBackground').clientHeight;
+        widthOfImage *= 0.67;
+        heightOfImage *= 0.78;
+        document.getElementById('teeth').style.width = `${widthOfImage}px`;
+        document.getElementById('teeth').style.height = `${heightOfImage}px`;
+    });
+    window.addEventListener('resize', function (event) {
+        var widthOfImage = document.getElementById('teethBackground').clientWidth;
+        var heightOfImage = document.getElementById('teethBackground').clientHeight;
+        widthOfImage *= 0.67;
+        heightOfImage *= 0.78;
+        document.getElementById('teeth').style.width = `${widthOfImage}px`;
+        document.getElementById('teeth').style.height = `${heightOfImage}px`;
+    });
+
 
     var toothKeywords = [];
     var surfaceKeywords = [];
@@ -334,24 +355,41 @@
     }); 
 
     function SurfaceColorCodes(observation) {
-        switch (observation) {
-            case "terve":
-                return "green";
-            case "reikä":
-                return "olive";
-            case "paikkaus":
-                return "gray";
-            case "juurihoito":
-                return "yellow";
-            case "poisto":
-                return "black";
-            case "ikivihreä":
-                return "lime";
-            case "parodontiitti":
-                return "purple";
-            default:
-                return "green";
-        }
+        if (observation.includes("DEN")) { return "red"; }
+        if (observation.includes("aktiivinen kiillekaries (KII)")) { return "sienna"; }
+        if (observation.includes("MUO")) { return "tan"; }
+        if (observation.includes("LAS")) { return "springgreen"; }
+        if (observation.includes("PIN")) { return "tan"; }
+        if (observation.includes("AMA")) { return "silver"; }
+        if (observation.includes("PUL")) { return "pink"; }
+        if (observation.includes("inaktiivinen kiillekaries (KII)")) { return "mediumaquamarine"; }
+
+        if (observation.includes("VÄL")) { return "plum"; }
+        if (observation.includes("LOH")) { return "powderblue"; }
+        if (observation.includes("ATR")) { return "royalblue"; }
+        if (observation.includes("ABR")) { return "royalblue"; }
+        if (observation.includes("ERO")) { return "royalblue"; }
+        if (observation.includes("FLU")) { return "royalblue"; }
+        if (observation.includes("HYP")) { return "royalblue"; }
+        if (observation.includes("HYM")) { return "royalblue"; }
+
+        if (observation.includes("VÄS")) { return "royalblue"; }
+        if (observation.includes("FRA")) { return "royalblue"; }
+        if (observation.includes("MFR")) { return "royalblue"; }
+        if (observation.includes("KUF")) { return "royalblue"; }
+        if (observation.includes("SDI")) { return "royalblue"; }
+        if (observation.includes("Pinn.")) { return "snow"; }
+        if (observation.includes("KER")) { return "seashell"; }
+
+        if (observation.includes("IVV")) { return "salmon"; }
+        if (observation.includes("BIO")) { return "gold"; }
+        if (observation.includes("SPH")) { return "limegreen"; }
+        if (observation.includes("SBH")) { return "limegreen"; }
+        if (observation.includes("APA")) { return "mistyrose"; }
+        if (observation.includes("KKP")) { return "mistyrose"; }
+        if (observation.includes("PPP")) { return "mistyrose"; }
+        if (observation.includes("IPP")) { return "mistyrose"; }
+        return "#dfeaeb";
     }
 
     function toothNotFound(num) {
@@ -369,6 +407,7 @@
         }
         if (surface != null && sur != 0) {
             surface.style.background = SurfaceColorCodes(obs);
+            surface.style.borderColor = `${SurfaceColorCodes(obs)} transparent transparent transparent`;
             observations[sur] = obs;
             teethData[num] = observations;
         }
@@ -449,6 +488,7 @@
         
 
         document.getElementById("logStatementContainer").prepend(statement);
+        document.getElementById("logStatementContainer").style.height = `${statement.clientHeight}px`;
         let children = document.getElementById("logStatementContainer").children;
         const moveDown = [
             { transform: 'translateY(-118%)' },
@@ -508,6 +548,10 @@
             else if (i != ID) {
                 document.getElementById(`statement${i}`).animate(moveUp, timing);
             }
+            if (i == ID - 1) {
+                let h = document.getElementById(`statement${i}`).clientHeight;
+                document.getElementById("logStatementContainer").style.height = `${h}px`;
+            } 
         }
         //Remove log statement with ID from logs array
         logs.splice(ID, 1);
