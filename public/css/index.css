@@ -21,6 +21,9 @@ p {
 h1 {
     color:white;
 }
+h2 {
+    font-size:1.2rem;
+}
 h3 {
     color: white;
 }
@@ -37,39 +40,6 @@ body {
     display: flex;
     flex-direction: row;
     overflow-x:hidden;
-}
-
-@media only screen and (max-width: 1460px) {
-    body {
-        overflow-y: visible;
-    }
-    .parentContainer {
-        flex-wrap: wrap;
-        justify-content: space-between;
-    }
-    .historyLog {
-        min-width: 700px;
-    }
-    .toothInformationContainer {
-        flex-grow:1;
-    }
-}
-
-@media only screen and (min-width: 1460px) {
-    body {
-        overflow-y: hidden;
-    }
-    .parentContainer {
-        flex-wrap: nowrap;
-        justify-content: left;
-        overflow-y:hidden;
-    }
-    .historyLog {
-        min-width: 480px;
-    }
-    .toothInformationContainer {
-        flex-grow: 0;
-    }
 }
 
 .teeth {
@@ -195,7 +165,7 @@ body {
 
 .toggleButton {
     height: 40px;
-    width: calc(100% - 60px);
+    width: calc(100%-10px);
     display: flex;
     flex-direction:row;
     justify-content:flex-start;
@@ -227,15 +197,14 @@ body {
     background:none;
     left:15px;
     border: 2px white solid;
-    transition: box-shadow 0.2s;
 }
 
-.requestButton:hover {
-    box-shadow: 0px 0px 15px 5px rgba(255,255,255,0.2);
-}
+    .requestButton:hover {
+        filter: brightness(0.9);
+    }
 
     .requestButton:active {
-        background: rgba(255,255,255,0.2);
+        filter: brightness(0.85);
     }
 
 .requestButtonImage {
@@ -248,7 +217,7 @@ body {
 
 .voiceContainer {
     height: 75px;
-    width: calc(100% - 56px);
+    width: calc(100% - 5px);
     background: var(--mBackground);
     border: 3px solid;
     border-radius: 5px;
@@ -296,17 +265,21 @@ body {
     left:111.5%;
 }
 
-.historyLog {
+.mainInfoContainer {
     top: 0px;
     left: 0px;
-    min-width: 480px;
-    position: relative;
-    font-size: 1em;
+    font-size: 1rem;
     font-family: inherit;
     height: 100%;
-    background:white;
-    border-radius:0px 20px 20px 0px;
-    z-index:3;
+    background: white;
+    border-radius: 0px 20px 20px 0px;
+    z-index: 3;
+    display:flex;
+    justify-content:start;
+    gap:1rem;
+    flex-direction:column;
+    padding:0rem 2rem 0 2rem;
+    overflow-y:hidden;
 }
 
 .logStatement {
@@ -362,10 +335,9 @@ body {
 
 .logStatementContainer {
     height: 5vh;
-    width: calc(100% - 10px);
+    width: calc(100% - 5px);
     text-align: center;
-    padding: 0px 5px 0px 5px;
-    margin-bottom:-10px;
+    padding: 0px 5px 0px 0px;
     overflow-y: scroll;
     overflow-x: visible;
     align-items: center;
@@ -378,15 +350,11 @@ body {
 }
 
 .logStatementContainerParent {
-    width: calc(100% - 71px);
     max-height: 510px;
     text-align: left;
-    padding: 8px;
-    position: absolute;
-    left: 25px;
-    top: 25px;
     display: flex;
     flex-direction: column;
+    margin-top:0rem;
 }
 
 .manualInput {
@@ -402,6 +370,7 @@ body {
     color: white;
     background: var(--mBackground);
     transition: background 1s;
+    display:none;
 }
 
     .manualInput:hover {
@@ -423,10 +392,10 @@ body {
 }
 
 .controlContainer {
-    position:absolute;
     width:100%;
-    bottom:25px;
-    left:25px;
+    position:relative;
+    margin-bottom:1rem;
+    margin-top:auto;
 }
 
 .inButton {
@@ -520,43 +489,29 @@ input[type="file"] {
     display:none;
 }
 
-.toothInformationContainer {
-    font-family: inherit;
-    height: 100%;
-    background: var(--sPanel);
-    min-width: 500px;
-    margin-left: -15px;
-    padding-left: 15px;
-    margin-right:-15px;
-    z-index: 2;
-    border-radius: 0px 20px 20px 0px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-
 .surfaceInformationContainer {
-    padding: 10px 30px 10px 20px;
-    margin: 20px;
-    margin-top: 44px;
-    height: 50%;
+    padding: 0px 30px 0px 0px;
     overflow:hidden;
     overflow-y:scroll;
+    min-height:90px;
+}
+
+.surfaceInformationContainer p {
+    margin:5px 0 0 5px;
 }
 
 .informationContainer {
     background: var(--sBackground);
     border-radius:10px;
-    padding: 10px 30px 10px 20px;
-    margin: 20px;
-    margin-bottom: 30px;
-    margin-top:5px;
-    height: 22%;
+    padding: 5px 30px 5px 20px;
+    height: 15%;
+    min-height:100px;
     overflow: hidden;
 }
 
 .informationContainer h3 {
     margin:10px 0px 5px 0px;
+    font-size:1rem;
 }
 
 .informationContainerOverflow {
@@ -572,9 +527,9 @@ input[type="file"] {
     display:flex;
     flex-direction:row;
     background: var(--sBackground);
-    margin: 10px 0px 10px 0px;
+    margin: 10px 0px 5px 0px;
     padding:10px;
-    border-radius:20px;
+    border-radius:10px;
 }
 
     .surfacePair:hover {
@@ -582,12 +537,13 @@ input[type="file"] {
     }
 
 .surfacePair h2 {
-    margin:0px 0px 0px 5px;
+    margin:0px 0px 0px 0px;
     color:white;
+    font-size:1.3rem;
 }
 
-.surfacePair h3 {
-    margin: 1px 0px 0px 1em;
+.surfacePair p {
+    margin: 3px 0px 0px 1rem;
 }
 
 .surfaceID {
@@ -597,15 +553,16 @@ input[type="file"] {
 #firstPair {
     display:flex;
     flex-direction:column;
+    margin-bottom: 15px;
 }
 
 #firstPair h2 {
-    margin-left:10px !important;
-    font-size:1em;
+    margin-left:5px !important;
+    font-size:0.8rem;
 }
 
-#firstPair h3 {
-    margin-left: 10px !important;
+#firstPair p {
+    margin-left: 5px !important;
 }
 
 .logo {
@@ -681,4 +638,43 @@ input:checked + .slider:before {
 
 .slider.round:before {
     border-radius: 50%;
-} 
+}
+
+@media only screen and (min-width: 800px) {
+    body {
+        overflow-y: hidden;
+    }
+
+    .parentContainer {
+        flex-wrap: nowrap;
+        justify-content: left;
+        overflow-y: hidden;
+    }
+
+    .mainInfoContainer {
+        min-width: 30%;
+    }
+
+    .toothInformationContainer {
+        flex-grow: 0;
+    }
+}
+
+@media only screen and (max-width: 800px) {
+    body {
+        overflow-y: visible;
+    }
+
+    .parentContainer {
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+
+    .mainInfoContainer {
+        min-width: calc(95% - 15px);
+    }
+
+    .toothInformationContainer {
+        flex-grow: 1;
+    }
+}
