@@ -278,7 +278,7 @@ body {
     justify-content:start;
     gap:1rem;
     flex-direction:column;
-    padding:0rem 2rem 0 2rem;
+    padding:0rem 1.8rem 0 1.6rem;
     overflow-y:hidden;
 }
 
