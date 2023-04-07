@@ -588,6 +588,7 @@
         setTimeout(function () { statement.remove(); waitForAnimation = false; }, 600);
     }
 
+    /* Test Commands
     InitiateCommand('11', '1', 'poisto', true);
     InitiateCommand('11', '1', 'paikkaus', true);
     InitiateCommand('11', '1', 'paikkaus', true);
@@ -595,6 +596,7 @@
     InitiateCommand('11', '1', 'paikkaus', true);
     InitiateCommand('11', '1', 'paikkaus', true);
     InitiateCommand('11', '5', 'poisto', true);
+    */
 
     function save() {
         var today = new Date();
@@ -719,6 +721,44 @@
         document.getElementById('requestButtonImage').style.filter = filter;
     }
 
+    //okklusaali difficult word for API
+    function transcriptionReplace(word) {
+        switch (word) {
+            case "Olli":
+                return '1';
+            case "Oulu":
+                return '1';
+            case "Charlie":
+                return '1';
+            case "Kulosaari":
+                return '1';
+            case "purupinta":
+                return '1';
+            case "okklusaalipinta":
+                return '1';
+            case "mesiaali":
+                return '2';
+            case "bukkaali":
+                return '3';
+            case "labiaali":
+                return '3';
+            case "distaali":
+                return '4';
+            case "linguaali":
+                return '5';
+            case "palatinaali":
+                return '5';
+            case "pinta":
+                return null;
+            case "pinta-ala":
+                return null;
+            case "+":
+                return null;
+            default:
+                return word;
+        }
+    }
+
     // new instance of speech recognition
     var recognition = new webkitSpeechRecognition();
     var recognizerRun = false;
@@ -760,8 +800,8 @@
             let lastWords = event.results[resultsLength][0].transcript;
             let tempSegments = event.results[resultsLength][0].transcript.split(' ');
 
-            //Limit recognition preview to 4 words.
-            if (tempSegments.length > 4) {
+            //Limit recognition preview to 5 words.
+            if (tempSegments.length > 5) {
                 let len = tempSegments.length;
                 lastWords = `${tempSegments[len - 4]} ${tempSegments[len - 3]} ${tempSegments[len - 2]} ${tempSegments[len - 1]}`;
             }
@@ -775,7 +815,17 @@
             for (let i = 0; i <= ArrayLength; i++) {
                 transcription += event.results[resultsLength][i].transcript + ' ';
             }
-            let segments = transcription.split(' ');
+            let unFilteredSegments = transcription.split(' ');
+            let filteredTranscription = "";
+            //Replace surface names with numbers and remove "pinta"
+            for (let i = 0; i < unFilteredSegments.length; i++) {
+                let rep = transcriptionReplace(unFilteredSegments[i]);
+                if (rep == null) {
+                    continue;
+                }
+                filteredTranscription += rep + ' ';
+            }
+            let segments = filteredTranscription.split(' ');
             Recognize(segments);
         }
 
